@@ -1,0 +1,13 @@
+# Generated
+node_modules
+dist
+
+# Configs
+.env
+
+# IDE
+.idea
+
+# Logs
+/logs/*
+!/logs/.gitkeep
