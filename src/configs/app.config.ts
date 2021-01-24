@@ -24,6 +24,7 @@ const appConfig = {
     MAILER_USER_PASSWORD: String(process.env.MAILER_USER_PASSWORD),
     MAILER_MAIL_FROM_NAME: String(process.env.MAILER_MAIL_FROM_NAME),
     MAILER_MAIL_FROM: String(process.env.MAILER_MAIL_FROM),
+    ALLOWED_ORIGINS: String(process.env.ALLOWED_ORIGINS).split(","),
 };
 
 export default appConfig;

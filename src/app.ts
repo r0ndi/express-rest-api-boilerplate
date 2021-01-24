@@ -1,6 +1,7 @@
 import EventListenerContainer from "./utils/event-listener.container";
 import errorMiddleware from "./middlewares/error.middleware";
 import UserEventListener from "./subscribers/user.event-listener";
+import corsMiddleware from "./middlewares/cors.middleware";
 import ExampleCommand from "./commands/example.command";
 import appConfig from "./configs/app.config";
 import Controller from "./api/controller";
@@ -19,6 +20,7 @@ class App {
         this.app = express();
 
         this.initializeLogger();
+        this.initializeCors();
         this.initializeMiddlewares();
         this.initializeControllers(controllers);
         this.initializeErrorHandling();
@@ -48,7 +50,6 @@ class App {
         this.app.use(helmet.hsts());
         this.app.use(helmet.ieNoOpen());
         this.app.use(helmet.noSniff());
-        this.app.use(helmet.permittedCrossDomainPolicies());
         this.app.use(helmet.referrerPolicy());
         this.app.use(helmet.xssFilter());
     }
@@ -60,6 +61,10 @@ class App {
 
     private initializeErrorHandling(): void {
         this.app.use(errorMiddleware);
+    }
+
+    private initializeCors(): void {
+        this.app.use(corsMiddleware());
     }
 
     private initializeControllers(controllers: Controller[]): void {
