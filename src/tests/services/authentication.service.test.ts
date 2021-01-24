@@ -64,4 +64,14 @@ describe("The AuthenticationService", () => {
         });
     });
 
+    describe("test refresh token", () => {
+        it("should return a user with refreshed token", async () => {
+            const authenticationService: AuthenticationService = new AuthenticationService();
+            const { tokenData, user } = authenticationService.refreshToken(userMock.contextUser);
+
+            expect(tokenData.token).toBeDefined();
+            expect(user).toEqual(userMock.contextUser);
+        });
+    });
+
 });

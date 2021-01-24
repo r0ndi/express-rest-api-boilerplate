@@ -41,6 +41,12 @@ class AuthenticationService {
         return { tokenData, cookie, user };
     }
 
+    public refreshToken(user: UserEntity) {
+        const tokenData: TokenData = this.createToken(user);
+        const cookie: string = this.createCookie(tokenData);
+        return { tokenData, cookie, user };
+    }
+
     private createToken(user: UserEntity): TokenData {
         const expiresIn: number = this.EXPIRES_IN;
         const secret: string = appConfig.JWT_SECRET;

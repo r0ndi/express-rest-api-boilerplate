@@ -10,6 +10,9 @@ import MailerService from "../services/mailer/mailer.service";
 import NewUserMail from "../services/mailer/mails/new-user.mail";
 import EventListenerContainer from "../utils/event-listener.container";
 import UserEventListener from "../subscribers/user.event-listener";
+import authMiddleware from "../middlewares/auth.middleware";
+import RequestWithUser from "../interfaces/request-with-user.interface";
+import UserEntity from "../entities/user.entity";
 
 class AuthorizationController extends Controller {
     public authenticationService: AuthenticationService = new AuthenticationService();
@@ -22,6 +25,7 @@ class AuthorizationController extends Controller {
 
     protected initializeRoutes = (): void => {
         this.router.post(`${this.path}/logout`, this.logOut);
+        this.router.post(`${this.path}/refresh`, authMiddleware, this.refreshToken);
         this.router.post(`${this.path}/login`, validationMiddlaware(LogInDto), this.logIn);
         this.router.post(`${this.path}/register`, validationMiddlaware(RegisterDto), this.register);
     }
@@ -55,6 +59,17 @@ class AuthorizationController extends Controller {
         } catch (error) {
             next(error);
         }
+    }
+
+    private refreshToken = (request: RequestWithUser, response: Response, next: NextFunction) => {
+        const requestUser: UserEntity = request.user as UserEntity;
+        const { cookie, tokenData, user } = this.authenticationService.refreshToken(requestUser);
+
+        response.setHeader("Set-Cookie", [cookie]);
+        response.send({
+            user: hideUserPassword(user),
+            accessToken: tokenData.token,
+        });
     }
 
     private logOut = (request: Request, response: Response) => {

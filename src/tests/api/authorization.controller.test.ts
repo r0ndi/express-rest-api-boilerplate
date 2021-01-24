@@ -51,4 +51,27 @@ describe("The AuthController", () => {
         });
     });
 
+    describe("POST /auth/refresh", () => {
+        it("should refresh user token", async () => {
+            const hashedPassword: string = await bcrypt.hash(userMock.logInUser.password, appConfig.PASSWORD_SALT);
+            (typeorm as any).getRepository.mockReturnValue({
+                findOneOrFail: () => Promise.resolve({...userMock.contextUser, password: hashedPassword}),
+                findOne: () => Promise.resolve(userMock.contextUser),
+            });
+
+            const app: App = new App([
+                new AuthorizationController(),
+            ]);
+
+            const loggedUser = await request(app.getServer())
+                .post("/api/v1/auth/login")
+                .send(userMock.logInUser);
+
+            return request(app.getServer())
+                .post("/api/v1/auth/refresh")
+                .set("Authorization", `Bearer ${loggedUser.body.accessToken}`)
+                .expect(StatusCodes.OK);
+        });
+    });
+
 });
