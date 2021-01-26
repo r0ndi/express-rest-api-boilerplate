@@ -23,7 +23,7 @@ describe("The AuthController", () => {
             return request(app.getServer())
                 .post("/api/v1/auth/register")
                 .send(userMock.registerUser)
-                .expect(userMock.registerUser);
+                .expect(StatusCodes.CREATED);
         });
     });
 

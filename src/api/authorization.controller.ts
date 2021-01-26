@@ -47,7 +47,7 @@ class AuthorizationController extends Controller {
     private register = async (request: Request, response: Response, next: NextFunction) => {
         try {
             const registerData: RegisterDto = request.body;
-            const { cookie, user } = await this.authenticationService.register(registerData);
+            const { tokenData, cookie, user } = await this.authenticationService.register(registerData);
 
             const mailerService = new MailerService();
             const newUserMail = new NewUserMail({user});
@@ -55,7 +55,10 @@ class AuthorizationController extends Controller {
 
             response.setHeader("Set-Cookie", [cookie]);
             response.status(StatusCodes.CREATED);
-            response.send(hideUserPassword(user));
+            response.send({
+                user: hideUserPassword(user),
+                accessToken: tokenData.token,
+            });
         } catch (error) {
             next(error);
         }

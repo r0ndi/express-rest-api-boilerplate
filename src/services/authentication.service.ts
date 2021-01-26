@@ -26,7 +26,7 @@ class AuthenticationService {
 
         const tokenData: TokenData = this.createToken(user);
         const cookie: string = this.createCookie(tokenData);
-        return { cookie, user };
+        return { tokenData, cookie, user };
     }
 
     public async logIn(logInData: LogInDto) {
