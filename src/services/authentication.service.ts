@@ -8,7 +8,7 @@ import WrongCredentialsException from "../exceptions/wrong-credentials.exception
 import LogInDto from "../validations/log-in.dto";
 import appConfig from "../configs/app.config";
 import jwt from "jsonwebtoken";
-import bcrypt from "bcrypt";
+import bcryptjs from "bcryptjs";
 
 class AuthenticationService {
     private userRepository: Repository<UserEntity> = getRepository(UserEntity);
@@ -19,7 +19,7 @@ class AuthenticationService {
             throw new UserAlreadyExistsException(registerData.email);
         }
 
-        const hashedPassword: string = await bcrypt.hash(registerData.password, appConfig.PASSWORD_SALT);
+        const hashedPassword: string = await bcryptjs.hash(registerData.password, appConfig.PASSWORD_SALT);
         const user: UserEntity = this.userRepository.create({...registerData, password: hashedPassword});
 
         await this.userRepository.save(user);
@@ -31,7 +31,7 @@ class AuthenticationService {
 
     public async logIn(logInData: LogInDto) {
         const user: UserEntity = await this.userRepository.findOneOrFail({ email: logInData.email });
-        const isMatchedPassword = await bcrypt.compare(logInData.password, user.password ?? "");
+        const isMatchedPassword = await bcryptjs.compare(logInData.password, user.password ?? "");
         if (!isMatchedPassword) {
             throw new WrongCredentialsException();
         }

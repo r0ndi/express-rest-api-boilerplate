@@ -1,7 +1,7 @@
 import * as typeorm from "typeorm";
 import AuthenticationService from "../../services/authentication.service";
 import userMock from "../mocks/user.mock";
-import bcrypt from "bcrypt";
+import bcryptjs from "bcryptjs";
 import appConfig from "../../configs/app.config";
 import WrongCredentialsException from "../../exceptions/wrong-credentials.exception";
 import UserAlreadyExistsException from "../../exceptions/user-already-exists.exception";
@@ -13,7 +13,7 @@ describe("The AuthenticationService", () => {
     describe("test logIn", () => {
         describe("when user exist", () => {
             it("should return a user", async () => {
-                const hashedPassword: string = await bcrypt.hash(userMock.logInUser.password, appConfig.PASSWORD_SALT);
+                const hashedPassword: string = await bcryptjs.hash(userMock.logInUser.password, appConfig.PASSWORD_SALT);
                 (typeorm as any).getRepository.mockReturnValue({
                     findOneOrFail: () => Promise.resolve({...userMock.contextUser, password: hashedPassword}),
                 });

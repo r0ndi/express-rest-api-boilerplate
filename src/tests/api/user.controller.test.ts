@@ -5,7 +5,7 @@ import userMock from "../mocks/user.mock";
 import * as typeorm from "typeorm";
 import request from "supertest";
 import App from "../../app";
-import bcrypt from "bcrypt";
+import bcryptjs from "bcryptjs";
 import appConfig from "../../configs/app.config";
 import AuthorizationController from "../../api/authorization.controller";
 import { StatusCodes } from "http-status-codes";
@@ -37,7 +37,7 @@ describe("The UserController", () => {
 
     describe("GET /user/:id", () => {
         it("should return user", async () => {
-            const hashedPassword: string = await bcrypt.hash(userMock.logInUser.password, appConfig.PASSWORD_SALT);
+            const hashedPassword: string = await bcryptjs.hash(userMock.logInUser.password, appConfig.PASSWORD_SALT);
             (typeorm as any).getRepository.mockReturnValue({
                 findOneOrFail: () => Promise.resolve({...userMock.contextUser, password: hashedPassword}),
                 findOne: () => Promise.resolve(userMock.contextUser),
@@ -61,7 +61,7 @@ describe("The UserController", () => {
 
     describe("PATCH /user/:id", () => {
         it("should return modified user", async () => {
-            const hashedPassword: string = await bcrypt.hash(userMock.logInUser.password, appConfig.PASSWORD_SALT);
+            const hashedPassword: string = await bcryptjs.hash(userMock.logInUser.password, appConfig.PASSWORD_SALT);
             (typeorm as any).getRepository.mockReturnValue({
                 findOneOrFail: () => Promise.resolve({...userMock.contextUser, password: hashedPassword}),
                 findOne: () => Promise.resolve(userMock.contextUser),
@@ -87,7 +87,7 @@ describe("The UserController", () => {
 
     describe("DELETE /user/:id", () => {
         it("should return modified user", async () => {
-            const hashedPassword: string = await bcrypt.hash(userMock.logInUser.password, appConfig.PASSWORD_SALT);
+            const hashedPassword: string = await bcryptjs.hash(userMock.logInUser.password, appConfig.PASSWORD_SALT);
             (typeorm as any).getRepository.mockReturnValue({
                 findOneOrFail: () => Promise.resolve({...userMock.contextUser, password: hashedPassword}),
                 findOne: () => Promise.resolve(userMock.contextUser),

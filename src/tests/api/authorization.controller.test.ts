@@ -3,7 +3,7 @@ import userMock from "../mocks/user.mock";
 import * as typeorm from "typeorm";
 import request from "supertest";
 import App from "../../app";
-import bcrypt from "bcrypt";
+import bcryptjs from "bcryptjs";
 import appConfig from "../../configs/app.config";
 import { StatusCodes } from "http-status-codes";
 
@@ -29,7 +29,7 @@ describe("The AuthController", () => {
 
     describe("POST /auth/login", () => {
         it("response should create and return user", async () => {
-            const hashedPassword: string = await bcrypt.hash(userMock.logInUser.password, appConfig.PASSWORD_SALT);
+            const hashedPassword: string = await bcryptjs.hash(userMock.logInUser.password, appConfig.PASSWORD_SALT);
             (typeorm as any).getRepository.mockReturnValue({
                 findOneOrFail: () => Promise.resolve({...userMock.contextUser, password: hashedPassword}),
             });
@@ -53,7 +53,7 @@ describe("The AuthController", () => {
 
     describe("POST /auth/refresh", () => {
         it("should refresh user token", async () => {
-            const hashedPassword: string = await bcrypt.hash(userMock.logInUser.password, appConfig.PASSWORD_SALT);
+            const hashedPassword: string = await bcryptjs.hash(userMock.logInUser.password, appConfig.PASSWORD_SALT);
             (typeorm as any).getRepository.mockReturnValue({
                 findOneOrFail: () => Promise.resolve({...userMock.contextUser, password: hashedPassword}),
                 findOne: () => Promise.resolve(userMock.contextUser),
