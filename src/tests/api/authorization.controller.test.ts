@@ -2,7 +2,7 @@ import AuthorizationController from "../../api/authorization.controller";
 import userMock from "../mocks/user.mock";
 import * as typeorm from "typeorm";
 import request from "supertest";
-import App from "../../app";
+import Server from "../../server";
 import bcryptjs from "bcryptjs";
 import appConfig from "../../configs/app.config";
 import { StatusCodes } from "http-status-codes";
@@ -19,8 +19,8 @@ describe("The AuthController", () => {
                 save: () => Promise.resolve(),
             });
 
-            const app: App = new App([new AuthorizationController()]);
-            return request(app.getServer())
+            const server: Server = new Server([new AuthorizationController()]);
+            return request(server.getServer())
                 .post("/api/v1/auth/register")
                 .send(userMock.registerUser)
                 .expect(StatusCodes.CREATED);
@@ -34,8 +34,8 @@ describe("The AuthController", () => {
                 findOneOrFail: () => Promise.resolve({...userMock.contextUser, password: hashedPassword}),
             });
 
-            const app: App = new App([new AuthorizationController()]);
-            return await request(app.getServer())
+            const server: Server = new Server([new AuthorizationController()]);
+            return request(server.getServer())
                 .post("/api/v1/auth/login")
                 .send(userMock.logInUser)
                 .expect(StatusCodes.OK);
@@ -44,8 +44,8 @@ describe("The AuthController", () => {
 
     describe("POST /auth/logout", () => {
         it("response should create and return user", async () => {
-            const app: App = new App([new AuthorizationController()]);
-            return await request(app.getServer())
+            const server: Server = new Server([new AuthorizationController()]);
+            return await request(server.getServer())
                 .post("/api/v1/auth/logout")
                 .expect(StatusCodes.OK);
         });
@@ -59,15 +59,15 @@ describe("The AuthController", () => {
                 findOne: () => Promise.resolve(userMock.contextUser),
             });
 
-            const app: App = new App([
+            const server: Server = new Server([
                 new AuthorizationController(),
             ]);
 
-            const loggedUser = await request(app.getServer())
+            const loggedUser = await request(server.getServer())
                 .post("/api/v1/auth/login")
                 .send(userMock.logInUser);
 
-            return request(app.getServer())
+            return request(server.getServer())
                 .post("/api/v1/auth/refresh")
                 .set("Authorization", `Bearer ${loggedUser.body.accessToken}`)
                 .expect(StatusCodes.OK);

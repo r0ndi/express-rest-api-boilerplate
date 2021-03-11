@@ -4,7 +4,7 @@ import UserController from "../../api/user.controller";
 import userMock from "../mocks/user.mock";
 import * as typeorm from "typeorm";
 import request from "supertest";
-import App from "../../app";
+import Server from "../../server";
 import bcryptjs from "bcryptjs";
 import appConfig from "../../configs/app.config";
 import AuthorizationController from "../../api/authorization.controller";
@@ -17,9 +17,9 @@ describe("The UserController", () => {
     describe("checking authentication", () => {
         it("should catch invalid authentication token error", async () => {
             const exception = new WrongAuthenticationTokenException();
-            const app = new App([new UserController()]);
+            const server: Server = new Server([new UserController()]);
 
-            return request(app.getServer())
+            return request(server.getServer())
                 .get(`/api/v1/user/${userMock.contextUser.id}`)
                 .set("Authorization", "Bearer test.bearer.token")
                 .expect({ status: exception.status, message: exception.message });
@@ -27,9 +27,9 @@ describe("The UserController", () => {
 
         it("should catch missing authentication token error", async () => {
             const exception = new MissingAuthenticationTokenException();
-            const app = new App([new UserController()]);
+            const server: Server = new Server([new UserController()]);
 
-            return request(app.getServer())
+            return request(server.getServer())
                 .get(`/api/v1/user/${userMock.contextUser.id}`)
                 .expect({ status: exception.status, message: exception.message });
         });
@@ -43,16 +43,16 @@ describe("The UserController", () => {
                 findOne: () => Promise.resolve(userMock.contextUser),
             });
 
-            const app: App = new App([
+            const server: Server = new Server([
                 new UserController(),
                 new AuthorizationController(),
             ]);
 
-            const loggedUser = await request(app.getServer())
+            const loggedUser = await request(server.getServer())
                 .post("/api/v1/auth/login")
                 .send(userMock.logInUser);
 
-            return request(app.getServer())
+            return request(server.getServer())
                 .get(`/api/v1/user/${userMock.contextUser.id}`)
                 .set("Authorization", `Bearer ${loggedUser.body.accessToken}`)
                 .expect(userMock.contextUser);
@@ -68,16 +68,16 @@ describe("The UserController", () => {
                 update: () => Promise.resolve(userMock.contextUser),
             });
 
-            const app: App = new App([
+            const server: Server = new Server([
                 new UserController(),
                 new AuthorizationController(),
             ]);
 
-            const loggedUser = await request(app.getServer())
+            const loggedUser = await request(server.getServer())
                 .post("/api/v1/auth/login")
                 .send(userMock.logInUser);
 
-            return request(app.getServer())
+            return request(server.getServer())
                 .patch(`/api/v1/user/${userMock.contextUser.id}`)
                 .set("Authorization", `Bearer ${loggedUser.body.accessToken}`)
                 .send(userMock.contextUser)
@@ -94,16 +94,16 @@ describe("The UserController", () => {
                 delete: () => Promise.resolve(),
             });
 
-            const app: App = new App([
+            const server: Server = new Server([
                 new UserController(),
                 new AuthorizationController(),
             ]);
 
-            const loggedUser = await request(app.getServer())
+            const loggedUser = await request(server.getServer())
                 .post("/api/v1/auth/login")
                 .send(userMock.logInUser);
 
-            return request(app.getServer())
+            return request(server.getServer())
                 .delete(`/api/v1/user/${userMock.contextUser.id}`)
                 .set("Authorization", `Bearer ${loggedUser.body.accessToken}`)
                 .expect(StatusCodes.OK);

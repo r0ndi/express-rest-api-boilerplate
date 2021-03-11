@@ -9,9 +9,12 @@
     "rootDir": "./src",
     "strict": true,
     "alwaysStrict": true,
+    "allowJs": true,
+    "noImplicitAny": true,
 
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
+    "resolveJsonModule": true,
 
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
