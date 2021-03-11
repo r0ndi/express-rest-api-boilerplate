@@ -4,7 +4,7 @@
   "description": "Project with boilerplate REST API based on express.js & TS",
   "author": "sadelkonrad@gmail.com",
   "license": "MIT",
-  "main": "src/server.js",
+  "main": "src/app.js",
   "keywords": [
     "express.js",
     "typescript",
@@ -12,8 +12,8 @@
   ],
   "scripts": {
     "dev": "export NODE_ENV=development && npm run",
-    "start": "node dist/server.js",
-    "start-watch": "nodemon dist/server.js",
+    "start": "node dist/app.js",
+    "start-watch": "nodemon dist/app.js",
     "lint": "./node_modules/tslint/bin/tslint -p tsconfig.json -c tslint.json",
     "typeorm:cli": "node ./node_modules/typeorm/cli -f ./dist/configs/orm.config.js",
     "test": "export NODE_ENV=test && jest --silent",

@@ -53,7 +53,7 @@ class Server {
     }
 
     private initializeLogger(): void {
-        const accessLogStream = fs.createWriteStream("./../logs/morgan.log", { flags: "a" });
+        const accessLogStream = fs.createWriteStream(appConfig.MORGAN_LOG_FILE, { flags: "a" });
         this.app.use(morgan(appConfig.MORGAN_FORMAT, { stream: accessLogStream }));
     }
 
